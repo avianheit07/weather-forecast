@@ -55,3 +55,9 @@ Run the database migrations and seeders, make sure database is created
 ```
     php artisan generate:test-user {number of users} {--mixed}
 ```
+
+Run project
+
+```
+    php artisan serve
+```
