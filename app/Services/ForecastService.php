@@ -90,8 +90,10 @@ class ForecastService
         $totalValue = 0;
 
         foreach ($dataArr as $arr) {
-            $totalValue = bcadd($totalValue, $arr[$key], $this->precision);
-            $totalCtr++;
+            if ($arr[$key] > 0) {
+                $totalValue = bcadd($totalValue, $arr[$key], $this->precision);
+                $totalCtr++;
+            }
         }
 
         return bcdiv($totalValue, $totalCtr, $this->precision);
