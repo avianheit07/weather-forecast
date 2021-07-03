@@ -75,6 +75,7 @@ class ForecastService
             'wind_speed' => $windSpeedAvg,
             'weather'    => $weatherSummary
         ];
+
         Cache::add(strtolower($cityUnderscored) . Carbon::now()->format('Y-m-d'), [
             'date'  => Carbon::now(),
             'value' => $returnValue

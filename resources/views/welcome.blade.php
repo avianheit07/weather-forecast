@@ -50,7 +50,7 @@
                     <form id="get-forecast" action="{{ route('forecast.index') }}" method="GET">
                         @csrf
                         <div class="form-group">
-                            <label for="city">City <span class="required">*</span></label>
+                            <label for="city">City</label>
                             <input type="text" class="form-control" name="city" value="{{ old('city', request('city')) }}" id="city" placeholder="Enter city">
 
 

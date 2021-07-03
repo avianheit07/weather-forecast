@@ -2,21 +2,27 @@
 
 namespace App\Api;
 
+use App\Models\ApiWeatherResult;
 use GuzzleHttp\Client;
 use phpDocumentor\Reflection\Types\Mixed_;
 
 abstract class ApiAbstract implements ApiInterface
 {
+    use LoggingTrait;
+
     private $headers;
     private $guzzleClient;
     private $method;
     protected $baseUrl;
     protected $tokenValue;
     protected $tokenKey;
+    protected $name;
     private $queryParam;
+    private $model;
 
     public function __construct()
     {
+        $this->model        = new ApiWeatherResult;
         $this->guzzleClient = new Client;
         $this->method       = 'get';
         $this->headers      = [
@@ -89,11 +95,25 @@ abstract class ApiAbstract implements ApiInterface
 
             $context['response']      = $response->getBody();
             $context['response_code'] = $response->getStatusCode();
+
+            $this->add(array_merge($context, [
+                'api_name'   => $this->name,
+                'response'   => $response->getBody(),
+                'status'     => $response->getStatusCode(),
+                'ip_address' => request()->getClientIp()
+            ]));
+
             return $this->getBodyResponse($response);
             // context for logging
         } catch (\Exception $e) {
             // log error
             // log error message with context;
+            $this->add(array_merge($context, [
+                'api_name'   => $this->name,
+                'response'   => null,
+                'status'     => $e->getCode(),
+                'ip_address' => request()->getClientIp()
+            ]));
             return false;
         }
     }
