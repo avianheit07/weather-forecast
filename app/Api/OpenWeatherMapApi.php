@@ -13,11 +13,12 @@ class OpenWeatherMapApi extends ApiAbstract
 
     public function processValues($result): array
     {
+
         return [
-            'temp'       => $result->main->temp,
-            'humidity'   => $result->main->humidity,
-            'wind_speed' => $result->wind->speed,
-            'weather'    => $result->weather
+            'temp'       => $result->main->temp ?? 0,
+            'humidity'   => $result->main->humidity ?? 0,
+            'wind_speed' => $result->wind->speed ?? 0,
+            'weather'    => $result->weather ?? []
         ];
     }
 }

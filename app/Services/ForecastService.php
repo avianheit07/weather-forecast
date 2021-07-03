@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Api\OpenWeatherMapApi;
 use App\Api\WeatherBitApi;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ForecastService
 {
@@ -32,13 +34,29 @@ class ForecastService
 
     public function processForecast($city, $country): array
     {
-        $weather = new $this->openWeatherMapApi();
+        $city            = strtolower($city);
+        $cityUnderscored = str_replace(" ", "-", $city);
+        $weather         = new $this->openWeatherMapApi;
+        $weather2        = new $this->weatherBitApi;
+        $date            = Carbon::now()->format('Y-m-d');
+        $dateWithTime    = Carbon::now();
+        $cacheKey        = strtolower($cityUnderscored) . $date;
+
+        if (Cache::has($cacheKey)) {
+            $valueArr = Cache::get($cacheKey);
+            $valueData = $valueArr['value'];
+            $valueDate = $valueArr['date'];
+
+            if ($dateWithTime->diffInHours($valueDate) <= 3) {
+                return $valueData;
+            }
+        }
+
         $result  = $weather->setQueryParam([
             'q'     => "{$city},{$country}",
             'units' => 'metric'
         ])->send();
 
-        $weather2 = new $this->weatherBitApi;
         $result2 = $weather2->setQueryParam([
             'city' => "{$city},{$country}"
         ])->send();
@@ -51,12 +69,18 @@ class ForecastService
         $windSpeedAvg     = $this->averageOfNumericValues('wind_speed', $processedResult1, $processedResult2);
         $weatherSummary   = $this->summaryWeather('weather', $processedResult1, $processedResult2);
 
-        return [
+        $returnValue = [
             'temp'       => $tempAvg,
             'humidity'   => $humidityAvg,
             'wind_speed' => $windSpeedAvg,
             'weather'    => $weatherSummary
         ];
+        Cache::add(strtolower($cityUnderscored) . Carbon::now()->format('Y-m-d'), [
+            'date'  => Carbon::now(),
+            'value' => $returnValue
+        ]);
+
+        return $returnValue;
     }
 
     protected function averageOfNumericValues($key, ...$dataArr): ?string
