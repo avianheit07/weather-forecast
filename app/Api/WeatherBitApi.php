@@ -6,6 +6,7 @@ class WeatherBitApi extends ApiAbstract
 {
     public function __construct()
     {
+        $this->name = 'WeatherBitApi';
         $this->setBaseUrl('https://api.weatherbit.io/v2.0/current');
         $this->setTokenKey('key');
         $this->setTokenValue('334d41231b6f45f0a8497000e9ec2583');
