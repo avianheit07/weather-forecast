@@ -30,6 +30,12 @@
             .required {
                 color: red;
             }
+            .custom-invalid-feedback {
+                width: 100%;
+                margin-top: .25rem;
+                font-size: .875em;
+                color: #dc3545;
+            }
         </style>
         <!-- Styles -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -47,8 +53,9 @@
                             <label for="city">City <span class="required">*</span></label>
                             <input type="text" class="form-control" name="city" value="{{ old('city', request('city')) }}" id="city" placeholder="Enter city">
 
-                            <div class="invalid-feedback" role="alert">
-                                {{ ($errors->has('city') ? $errors->first('city') : '') }}
+
+                            <div class="custom-invalid-feedback" role="alert">
+                                {{ $messageError }}
                             </div>
                         </div>
                         <div class="form-group my-2 mb-5">

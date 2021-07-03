@@ -14,12 +14,11 @@ class WeatherBitApi extends ApiAbstract
 
     public function processValues($result): array
     {
-        $result = $result->data[0];
         return [
-            'temp'       => $result->temp,
-            'humidity'   => $result->rh,
-            'wind_speed' => $result->wind_spd,
-            'weather'    => [$result->weather],
+            'temp'       => $result->data[0]->temp ?? 0,
+            'humidity'   => $result->data[0]->rh ?? 0,
+            'wind_speed' => $result->data[0]->wind_spd ?? 0,
+            'weather'    => isset($result->data[0]) ? [$result->data[0]->weather] : [],
         ];
     }
 }
